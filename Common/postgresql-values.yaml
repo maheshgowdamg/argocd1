@@ -28,7 +28,7 @@ primary:
   resourcesPreset: medium
 
 readReplicas:
-  replicaCount: 2
+  replicaCount: 3
   extendedConfiguration: |
     max_connections = 3001
     shared_preload_libraries = 'pg_stat_statements'
