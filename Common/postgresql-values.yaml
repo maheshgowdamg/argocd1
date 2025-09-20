@@ -9,6 +9,7 @@ global:
 
 metrics:
   enabled: true
+  pgStatStatements: true
 
 primary:
   extendedConfiguration: |
