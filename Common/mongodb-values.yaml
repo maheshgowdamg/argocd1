@@ -24,5 +24,6 @@ metrics:
 persistence:
   size: 4Gi
 
-resourcesPreset: xlarge
+resourcesPreset: small
+
 
