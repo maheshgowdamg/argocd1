@@ -22,7 +22,7 @@ metrics:
       memory: 200Mi
 
 persistence:
-  size: 4Gi
+  size: 1Gi
 
 resourcesPreset: small
 
