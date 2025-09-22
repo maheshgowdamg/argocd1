@@ -1,5 +1,5 @@
 global:
-  storageClass: hostpath
+  storageClass: local-path
 
 architecture: replicaset
 replicaCount: 2
