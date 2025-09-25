@@ -10,6 +10,7 @@ global:
 metrics:
   enabled: true
   pgStatStatements: true
+  extendQuery: true
 
 primary:
   extendedConfiguration: |
