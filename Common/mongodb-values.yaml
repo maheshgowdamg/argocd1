@@ -2,7 +2,7 @@ global:
   storageClass: local-path
 
 architecture: replicaset
-replicaCount: 2
+replicaCount: 1
 replicaSetName: rs0
 useStatefulSet: true
 
