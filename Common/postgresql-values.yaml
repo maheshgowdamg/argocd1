@@ -11,6 +11,32 @@ metrics:
   enabled: true
   pgStatStatements: true
   extendQuery: true
+  # --- START: ADD THIS SECTION ---
+  customMetrics:
+    pg_stat_statements_slow_queries:
+      query: |
+        SELECT
+          query,
+          calls,
+          mean_exec_time,
+          total_exec_time
+        FROM pg_stat_statements
+        ORDER BY mean_exec_time DESC
+        LIMIT 10
+      metrics:
+        - query:
+            usage: "LABEL"
+            description: "The query string"
+        - calls:
+            usage: "COUNTER"
+            description: "Number of times the query has been executed"
+        - mean_exec_time:
+            usage: "GAUGE"
+            description: "Mean execution time in milliseconds"
+        - total_exec_time:
+            usage: "GAUGE"
+            description: "Total time spent in the statement in milliseconds"
+  # --- END: ADD THIS SECTION ---
 
 primary:
   extendedConfiguration: |
@@ -53,4 +79,3 @@ replication:
   enabled: true
   numSynchronousReplicas: 1
   synchronousCommit: "on"
-
