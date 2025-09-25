@@ -11,46 +11,9 @@ metrics:
   enabled: true
   pgStatStatements: true
   extendQuery: true
-  # --- CORRECTED CUSTOM METRICS SECTION ---
-  customMetrics:
-    pg_stat_statements_slow_queries:
-      query: |
-        SELECT
-          d.datname,
-          s.queryid,
-          s.query,
-          s.calls,
-          s.mean_exec_time,
-          s.total_exec_time
-        FROM pg_stat_statements s
-        JOIN pg_database d ON s.dbid = d.oid
-        ORDER BY s.mean_exec_time DESC
-        LIMIT 10
-      metrics:
-        - datname:
-            usage: "LABEL"
-            description: "Database name"
-        - queryid:
-            usage: "LABEL"
-            description: "Query ID hash"
-        - query:
-            usage: "LABEL"
-            description: "The query string"
-        - calls:
-            usage: "COUNTER"
-            description: "Number of times the query has been executed"
-        - mean_exec_time:
-            usage: "GAUGE"
-            description: "Mean execution time in milliseconds"
-        - total_exec_time:
-            usage: "GAUGE"
-            description: "Total time spent in the statement in milliseconds"
+
 
 primary:
-  # --- START: ADD THIS ANNOTATION TO TRIGGER RESTARTS ---
-  podAnnotations:
-    checksum/config: '{{ include "common.tplvalues.render" ( dict "value" .Values.metrics.customMetrics "context" . ) | sha256sum }}'
-  # --- END: ADD THIS ANNOTATION ---
   extendedConfiguration: |
     max_connections = 3001
     shared_preload_libraries = 'pg_stat_statements'
@@ -70,10 +33,7 @@ primary:
 
 readReplicas:
   replicaCount: 1
-  # --- START: ADD THIS ANNOTATION TO TRIGGER RESTARTS ---
-  podAnnotations:
-    checksum/config: '{{ include "common.tplvalues.render" ( dict "value" .Values.metrics.customMetrics "context" . ) | sha256sum }}'
-  # --- END: ADD THIS ANNOTATION ---
+
   extendedConfiguration: |
     max_connections = 3001
     shared_preload_libraries = 'pg_stat_statements'
