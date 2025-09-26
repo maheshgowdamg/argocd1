@@ -9,6 +9,8 @@ global:
 
 metrics:
   enabled: true
+  serviceMonitor:
+    enabled: true         
   pgStatStatements: true
   extendQuery: true
   customMetrics:
