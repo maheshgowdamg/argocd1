@@ -11,7 +11,40 @@ metrics:
   enabled: true
   pgStatStatements: true
   extendQuery: true
-
+  customMetrics:
+    queries: |-
+      pg_stat_statements:
+        query: |
+          SELECT
+            queryid,
+            calls,
+            total_exec_time,
+            mean_exec_time,
+            rows,
+            LEFT(query, 200) AS query
+          FROM pg_stat_statements
+          WHERE calls > 0
+          ORDER BY mean_exec_time DESC
+          LIMIT 20;
+        metrics:
+          - queryid:
+              usage: "LABEL"
+              description: "Query ID"
+          - query:
+              usage: "LABEL"
+              description: "Query text"
+          - calls:
+              usage: "COUNTER"
+              description: "Number of times executed"
+          - total_exec_time:
+              usage: "GAUGE"
+              description: "Total execution time (ms)"
+          - mean_exec_time:
+              usage: "GAUGE"
+              description: "Mean execution time (ms)"
+          - rows:
+              usage: "GAUGE"
+              description: "Rows retrieved/affected"
 
 primary:
   extendedConfiguration: |
@@ -23,8 +56,6 @@ primary:
     logging_collector = on
     log_directory = '/bitnami/postgresql/logs'
     log_filename = 'postgresql.log'
-    log_connections = off
-    log_disconnections = off
     log_min_duration_statement = 1000
     log_statement = 'all'
   persistence:
@@ -33,7 +64,6 @@ primary:
 
 readReplicas:
   replicaCount: 1
-
   extendedConfiguration: |
     max_connections = 3001
     shared_preload_libraries = 'pg_stat_statements'
@@ -43,8 +73,6 @@ readReplicas:
     logging_collector = on
     log_directory = '/bitnami/postgresql/logs'
     log_filename = 'postgresql.log'
-    log_connections = off
-    log_disconnections = off
     log_min_duration_statement = 1000
     log_statement = 'all'
   persistence:
