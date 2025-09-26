@@ -13,11 +13,7 @@ metrics:
     enabled: true
   pgStatStatements: true
   extendQuery: true
-  customMetrics:
-    enabled: true
-    # Instead of inline queries, refer to a ConfigMap containing your queries
-    existingConfigMap: postgres-custom-metrics
-
+  
 primary:
   extendedConfiguration: |
     max_connections = 3001
