@@ -11,9 +11,10 @@ metrics:
   enabled: true
   serviceMonitor:
     enabled: true
-  pgStatStatements: true
-  extendQuery: true
-  
+  pgStatStatements: true              # Enable pg_stat_statements collection
+  extendedQueryPath: /opt/bitnami/postgresql-exporter/queries.yaml
+  existingConfigmap: pg-exporter-queries  # ConfigMap with extended queries
+
 primary:
   extendedConfiguration: |
     max_connections = 3001
