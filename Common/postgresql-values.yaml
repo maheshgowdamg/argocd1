@@ -1,22 +1,17 @@
 architecture: replication
+
 global:
   postgresql:
     auth:
       existingSecret: postgresql
       database: postgres
   storageClass: local-path
+
 metrics:
   enabled: true
   pgStatStatements: true
-  image:  # Add this to override the postgres-exporter image
-    registry: docker.io
-    repository: bitnami/postgres-exporter
-    tag: 0.15.0  # Stable tag
+
 primary:
-  image:  # Add this to override the postgresql image for the primary
-    registry: docker.io
-    repository: bitnami/postgresql
-    tag: 16.3.0  # Stable tag
   extendedConfiguration: |
     max_connections = 3001
     shared_preload_libraries = 'pg_stat_statements'
@@ -32,11 +27,8 @@ primary:
   persistence:
     size: 2Gi
   resourcesPreset: medium
+
 readReplicas:
-  image:  # Add this to override the postgresql image for replicas
-    registry: docker.io
-    repository: bitnami/postgresql
-    tag: 16.3.0  # Stable tag
   replicaCount: 2
   extendedConfiguration: |
     max_connections = 3001
@@ -53,6 +45,7 @@ readReplicas:
   persistence:
     size: 2Gi
   resourcesPreset: medium
+
 replication:
   enabled: true
   numSynchronousReplicas: 1
