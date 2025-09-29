@@ -5,8 +5,7 @@ global:
     auth:
       existingSecret: postgresql
       database: postgres
-      storageClass: gp3
-      imageRegistry: "public.ecr.aws"
+
 
 metrics:
   enabled: true
