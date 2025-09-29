@@ -53,5 +53,3 @@ replication:
   numSynchronousReplicas: 1
   synchronousCommit: "on"
 
-imagePullSecrets:
-  - name: regcred  # optional, if your cluster requires Docker Hub authentication
