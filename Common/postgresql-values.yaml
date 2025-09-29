@@ -1,3 +1,5 @@
+# values.yaml
+
 architecture: replication
 
 global:
@@ -6,15 +8,11 @@ global:
       existingSecret: postgresql
       database: postgres
 
-
 metrics:
   enabled: true
   serviceMonitor:
     enabled: true
-  pgStatStatements: true              # Enable pg_stat_statements collection
-
-
-  
+  pgStatStatements: true
 
 primary:
   extendedConfiguration: |
@@ -31,6 +29,27 @@ primary:
   persistence:
     size: 2Gi
   resourcesPreset: medium
+  extraContainers:
+    - name: logrotate
+      image: ubuntu:latest
+      command:
+        - sh
+        - -c
+        - |
+          apt-get update && apt-get install -y logrotate && \
+          while true; do logrotate /etc/logrotate.d/postgres; sleep 86400; done
+      volumeMounts:
+        - name: logrotate-config
+          mountPath: /etc/logrotate.d/postgres
+        - name: postgresql-data
+          mountPath: /bitnami/postgresql/logs
+  extraVolumes:
+    - name: logrotate-config
+      configMap:
+        name: logrotate-postgres
+        items:
+          - key: postgres-logrotate.conf
+            path: postgres
 
 readReplicas:
   replicaCount: 1
@@ -48,6 +67,27 @@ readReplicas:
   persistence:
     size: 2Gi
   resourcesPreset: medium
+  extraContainers:
+    - name: logrotate
+      image: ubuntu:latest
+      command:
+        - sh
+        - -c
+        - |
+          apt-get update && apt-get install -y logrotate && \
+          while true; do logrotate /etc/logrotate.d/postgres; sleep 86400; done
+      volumeMounts:
+        - name: logrotate-config
+          mountPath: /etc/logrotate.d/postgres
+        - name: postgresql-data
+          mountPath: /bitnami/postgresql/logs
+  extraVolumes:
+    - name: logrotate-config
+      configMap:
+        name: logrotate-postgres
+        items:
+          - key: postgres-logrotate.conf
+            path: postgres
 
 replication:
   enabled: true
