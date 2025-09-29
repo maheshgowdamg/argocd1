@@ -29,7 +29,7 @@ primary:
   persistence:
     size: 2Gi
   resourcesPreset: medium
-  extraContainers:
+  sidecars:
     - name: logrotate
       image: ubuntu:latest
       command:
@@ -41,7 +41,7 @@ primary:
       volumeMounts:
         - name: logrotate-config
           mountPath: /etc/logrotate.d/postgres
-        - name: postgresql-data
+        - name: data
           mountPath: /bitnami/postgresql/logs
   extraVolumes:
     - name: logrotate-config
@@ -67,7 +67,7 @@ readReplicas:
   persistence:
     size: 2Gi
   resourcesPreset: medium
-  extraContainers:
+  sidecars:
     - name: logrotate
       image: ubuntu:latest
       command:
@@ -79,7 +79,7 @@ readReplicas:
       volumeMounts:
         - name: logrotate-config
           mountPath: /etc/logrotate.d/postgres
-        - name: postgresql-data
+        - name: data
           mountPath: /bitnami/postgresql/logs
   extraVolumes:
     - name: logrotate-config
