@@ -29,11 +29,12 @@ primary:
   resourcesPreset: medium
   sidecars:
     - name: logrotate
-      image: nouchka/logrotate:latest
+      image: ubuntu:22.04
       command:
         - sh
         - -c
         - |
+          apt-get update && apt-get install -y logrotate && \
           while true; do logrotate /etc/logrotate.d/postgres; sleep 86400; done
       volumeMounts:
         - name: logrotate-config
@@ -66,11 +67,12 @@ readReplicas:
   resourcesPreset: medium
   sidecars:
     - name: logrotate
-      image: nouchka/logrotate:latest
+      image: ubuntu:22.04
       command:
         - sh
         - -c
         - |
+          apt-get update && apt-get install -y logrotate && \
           while true; do logrotate /etc/logrotate.d/postgres; sleep 86400; done
       volumeMounts:
         - name: logrotate-config
