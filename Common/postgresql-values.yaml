@@ -5,13 +5,16 @@ global:
     auth:
       existingSecret: postgresql
       database: postgres
-  
 
 metrics:
   enabled: true
   pgStatStatements: true
+  image:
+    tag: 0.16.0-debian-12-r0
 
 primary:
+  image:
+    tag: 16.7.27-debian-12-r0
   extendedConfiguration: |
     max_connections = 3001
     shared_preload_libraries = 'pg_stat_statements'
@@ -30,6 +33,8 @@ primary:
 
 readReplicas:
   replicaCount: 2
+  image:
+    tag: 16.7.27-debian-12-r0
   extendedConfiguration: |
     max_connections = 3001
     shared_preload_libraries = 'pg_stat_statements'
@@ -50,3 +55,6 @@ replication:
   enabled: true
   numSynchronousReplicas: 1
   synchronousCommit: "on"
+
+imagePullSecrets:
+  - name: regcred  # optional, if your cluster requires Docker Hub authentication
