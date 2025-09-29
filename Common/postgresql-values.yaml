@@ -23,8 +23,8 @@ primary:
     log_min_duration_statement = 1000
     log_statement = 'all'
   persistence:
-    size: 20Gi
-  resourcesPreset: xlarge
+    size: 2Gi
+  resourcesPreset: small
 
 readReplicas:
   replicaCount: 2
@@ -41,8 +41,9 @@ readReplicas:
     log_min_duration_statement = 1000
     log_statement = 'all'
   persistence:
-    size: 20Gi
-  resourcesPreset: xlarge
+    size: 2Gi
+  resourcesPreset: small
+
 
 replication:
   enabled: true
