@@ -5,7 +5,7 @@ global:
     auth:
       existingSecret: postgresql
       database: postgres
-  storageClass: local-path
+  
 
 metrics:
   enabled: true
