@@ -5,7 +5,7 @@ global:
     auth:
       existingSecret: postgresql
       database: postgres
-
+      
 
 metrics:
   enabled: true
@@ -13,34 +13,52 @@ metrics:
 primary:
   extendedConfiguration: |
     max_connections = 3001
-    shared_preload_libraries = 'pg_stat_statements'
+    shared_preload_libraries = 'pg_stat_statements,pg_cron'
     pg_stat_statements.track = all
     log_destination = 'stderr'
     logging_collector = on
     log_directory = '/bitnami/postgresql/logs'
-    log_filename = 'postgresql.log'
-    log_connections = off
-    log_disconnections = off
+    log_filename = 'postgresql-%Y-%m-%d.log'
+    log_truncate_on_rotation = on
+    log_rotation_age = 1d
+    log_rotation_size = 0
     log_min_duration_statement = 1000
     log_statement = 'all'
+    log_file_mode = 0644
   persistence:
     size: 20Gi
   resourcesPreset: xlarge
+  extraVolumeMounts:
+    - name: postgres-log-cleanup
+      mountPath: /bitnami/postgresql/config
+  extraVolumes:
+    - name: postgres-log-cleanup
+      configMap:
+        name: postgres-log-cleanup
+  lifecycle:
+    postStart:
+      exec:
+        command:
+          - "sh"
+          - "-c"
+          - "su - postgres -c 'psql -f /bitnami/postgresql/config/delete-old-logs.sql' || true"
 
 readReplicas:
   replicaCount: 2
   extendedConfiguration: |
     max_connections = 3001
-    shared_preload_libraries = 'pg_stat_statements'
+    shared_preload_libraries = 'pg_stat_statements,pg_cron'
     pg_stat_statements.track = all
     log_destination = 'stderr'
     logging_collector = on
     log_directory = '/bitnami/postgresql/logs'
-    log_filename = 'postgresql.log'
-    log_connections = off
-    log_disconnections = off
+    log_filename = 'postgresql-%Y-%m-%d.log'
+    log_truncate_on_rotation = on
+    log_rotation_age = 1d
+    log_rotation_size = 0
     log_min_duration_statement = 1000
     log_statement = 'all'
+    log_file_mode = 0644
   persistence:
     size: 20Gi
   resourcesPreset: xlarge
