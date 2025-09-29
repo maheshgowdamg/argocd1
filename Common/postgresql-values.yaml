@@ -9,10 +9,8 @@ global:
 metrics:
   enabled: true
   pgStatStatements: true
-  
 
 primary:
-  
   extendedConfiguration: |
     max_connections = 3001
     shared_preload_libraries = 'pg_stat_statements'
@@ -20,18 +18,20 @@ primary:
     log_destination = 'stderr'
     logging_collector = on
     log_directory = '/bitnami/postgresql/logs'
-    log_filename = 'postgresql.log'
+    log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
     log_connections = off
     log_disconnections = off
     log_min_duration_statement = 1000
     log_statement = 'all'
+    log_rotation_age = 1d
+    
+    log_truncate_on_rotation = off
   persistence:
     size: 2Gi
   resourcesPreset: medium
 
 readReplicas:
   replicaCount: 1
- 
   extendedConfiguration: |
     max_connections = 3001
     shared_preload_libraries = 'pg_stat_statements'
@@ -39,11 +39,14 @@ readReplicas:
     log_destination = 'stderr'
     logging_collector = on
     log_directory = '/bitnami/postgresql/logs'
-    log_filename = 'postgresql.log'
+    log_filename = 'postgresql-%Y-%m-%d_%H%M%S.log'
     log_connections = off
     log_disconnections = off
     log_min_duration_statement = 1000
     log_statement = 'all'
+    log_rotation_age = 1d
+   
+    log_truncate_on_rotation = off
   persistence:
     size: 2Gi
   resourcesPreset: medium
@@ -53,3 +56,5 @@ replication:
   numSynchronousReplicas: 1
   synchronousCommit: "on"
 
+imagePullSecrets:
+  - name: regcred
