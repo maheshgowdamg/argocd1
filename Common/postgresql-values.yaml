@@ -13,13 +13,7 @@ metrics:
     enabled: true
   pgStatStatements: true              # Enable pg_stat_statements collection
 
-initdb:
-  scripts:
-    enable_pg_stat.sql: |
-      CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
-      CREATE USER exporter WITH PASSWORD 'DataDB@123';
-      GRANT pg_monitor TO postgres;
-      GRANT CONNECT ON DATABASE postgres TO postgres;
+
   
 
 primary:
