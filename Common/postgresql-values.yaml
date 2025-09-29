@@ -5,93 +5,46 @@ global:
     auth:
       existingSecret: postgresql
       database: postgres
+      storageClass: gp3
+      imageRegistry: "public.ecr.aws"
 
 metrics:
   enabled: true
-  serviceMonitor:
-    enabled: true
-  pgStatStatements: true
 
 primary:
   extendedConfiguration: |
     max_connections = 3001
     shared_preload_libraries = 'pg_stat_statements'
     pg_stat_statements.track = all
-    track_io_timing = on
     log_destination = 'stderr'
     logging_collector = on
     log_directory = '/bitnami/postgresql/logs'
     log_filename = 'postgresql.log'
+    log_connections = off
+    log_disconnections = off
     log_min_duration_statement = 1000
     log_statement = 'all'
   persistence:
-    size: 2Gi
-  resourcesPreset: medium
-  sidecars:
-    - name: logrotate
-      image: docker.io/bitnami/postgresql:16
-      securityContext:
-        runAsUser: 0
-      command:
-        - sh
-        - -c
-        - |
-          apt-get update && apt-get install -y logrotate && \
-          chown -R 1001:1001 /bitnami/postgresql/logs && \
-          while true; do logrotate /etc/logrotate.d/postgres; sleep 86400; done
-      volumeMounts:
-        - name: logrotate-config
-          mountPath: /etc/logrotate.d/postgres
-        - name: data
-          mountPath: /bitnami/postgresql/logs
-  extraVolumes:
-    - name: logrotate-config
-      configMap:
-        name: logrotate-postgres
-        items:
-          - key: postgres-logrotate.conf
-            path: postgres
+    size: 20Gi
+  resourcesPreset: xlarge
 
 readReplicas:
-  replicaCount: 1
+  replicaCount: 2
   extendedConfiguration: |
     max_connections = 3001
     shared_preload_libraries = 'pg_stat_statements'
     pg_stat_statements.track = all
-    track_io_timing = on
     log_destination = 'stderr'
     logging_collector = on
     log_directory = '/bitnami/postgresql/logs'
     log_filename = 'postgresql.log'
+    log_connections = off
+    log_disconnections = off
     log_min_duration_statement = 1000
     log_statement = 'all'
   persistence:
-    size: 2Gi
-  resourcesPreset: medium
-  sidecars:
-    - name: logrotate
-      image: docker.io/bitnami/postgresql:16
-      securityContext:
-        runAsUser: 0
-      command:
-        - sh
-        - -c
-        - |
-          apt-get update && apt-get install -y logrotate && \
-          chown -R 1001:1001 /bitnami/postgresql/logs && \
-          while true; do logrotate /etc/logrotate.d/postgres; sleep 86400; done
-      volumeMounts:
-        - name: logrotate-config
-          mountPath: /etc/logrotate.d/postgres
-        - name: data
-          mountPath: /bitnami/postgresql/logs
-  extraVolumes:
-    - name: logrotate-config
-      configMap:
-        name: logrotate-postgres
-        items:
-          - key: postgres-logrotate.conf
-            path: postgres
+    size: 20Gi
+  resourcesPreset: xlarge
 
 replication:
   enabled: true
