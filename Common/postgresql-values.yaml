@@ -1,5 +1,3 @@
-# postgresql-values.yaml
-
 architecture: replication
 
 global:
@@ -7,20 +5,16 @@ global:
     auth:
       existingSecret: postgresql
       database: postgres
+  storageClass: local-path
 
 metrics:
   enabled: true
-  image:
-    repository: bitnami/postgres-exporter
-    tag: 0.15.0-debian-12-r36
+  pgStatStatements: true
 
 primary:
-  image:
-    repository: bitnami/postgresql
-    tag: 16.3.0-debian-12-r0  # updated working tag
   extendedConfiguration: |
     max_connections = 3001
-    shared_preload_libraries = 'pg_stat_statements,pgaudit'
+    shared_preload_libraries = 'pg_stat_statements'
     pg_stat_statements.track = all
     log_destination = 'stderr'
     logging_collector = on
@@ -32,16 +26,13 @@ primary:
     log_statement = 'all'
   persistence:
     size: 2Gi
-  resourcesPreset: small
+  resourcesPreset: medium
 
 readReplicas:
-  replicaCount: 1
-  image:
-    repository: bitnami/postgresql
-    tag: 16.4.0-debian-12-r0  # same as primary
+  replicaCount: 2
   extendedConfiguration: |
     max_connections = 3001
-    shared_preload_libraries = 'pg_stat_statements,pgaudit'
+    shared_preload_libraries = 'pg_stat_statements'
     pg_stat_statements.track = all
     log_destination = 'stderr'
     logging_collector = on
@@ -53,7 +44,7 @@ readReplicas:
     log_statement = 'all'
   persistence:
     size: 2Gi
-  resourcesPreset: small
+  resourcesPreset: medium
 
 replication:
   enabled: true
