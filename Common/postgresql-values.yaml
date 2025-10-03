@@ -12,21 +12,26 @@ metrics:
 
 primary:
   extendedConfiguration: |
+    # Core
     max_connections = 3001
     shared_preload_libraries = 'pg_stat_statements'
     pg_stat_statements.track = all
+
+    # Kubernetes-native logging (no files on PVC)
     log_destination = 'stderr'
-    logging_collector = on
-    log_directory = '/bitnami/postgresql/logs'
-    log_filename = 'postgresql-%Y-%m-%d.log'
-    log_truncate_on_rotation = on
-    log_connections = off
-    log_disconnections = off
-    log_min_duration_statement = 1000
-    log_statement = 'all'
-    log_rotation_age = 1d
-    
-    log_truncate_on_rotation = off
+    logging_collector = off
+
+    # Structured, high-signal logs
+    log_line_prefix = '%m [%p] %q%u@%d %r %a '
+    log_error_verbosity = default            # or 'verbose' when debugging prod incidents
+    log_min_duration_statement = 1000        # log queries >= 1s
+    log_statement = 'none'                   # avoid massive logs
+    log_checkpoints = on
+    log_lock_waits = on
+    deadlock_timeout = '2s'
+    track_io_timing = on
+    log_autovacuum_min_duration = 1000       # log autovacuum runs >=1s
+    temp_file_limit = '2GB'                  # guardrails
   persistence:
     size: 2Gi
   resourcesPreset: medium
@@ -34,20 +39,26 @@ primary:
 readReplicas:
   replicaCount: 1
   extendedConfiguration: |
+    # Core
     max_connections = 3001
     shared_preload_libraries = 'pg_stat_statements'
     pg_stat_statements.track = all
+
+    # Kubernetes-native logging (no files on PVC)
     log_destination = 'stderr'
-    logging_collector = on
-    log_directory = '/bitnami/postgresql/logs'
-    log_filename = 'postgresql-%Y-%m-%d.log'
-    log_truncate_on_rotation = on
-    log_disconnections = off
+    logging_collector = off
+
+    # Structured, high-signal logs
+    log_line_prefix = '%m [%p] %q%u@%d %r %a '
+    log_error_verbosity = default
     log_min_duration_statement = 1000
-    log_statement = 'all'
-    log_rotation_age = 1d
-   
-    log_truncate_on_rotation = off
+    log_statement = 'none'
+    log_checkpoints = on
+    log_lock_waits = on
+    deadlock_timeout = '2s'
+    track_io_timing = on
+    log_autovacuum_min_duration = 1000
+    temp_file_limit = '2GB'
   persistence:
     size: 2Gi
   resourcesPreset: medium
@@ -56,5 +67,3 @@ replication:
   enabled: true
   numSynchronousReplicas: 1
   synchronousCommit: "on"
-
-
